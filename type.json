@@ -1,0 +1,757 @@
+{
+    "data": {
+        "me": {
+            "id": "U_Sgmlb2okWM6C",
+            "name": "Samuel N'dri",
+            "contactMobile": "+2250103284835",
+            "businessUser": {
+                "role": "ADMIN",
+                "canSeeGlobalReportsPage": true,
+                "canSeePaymentLinksPage": false,
+                "canManageCollections": false,
+                "business": {
+                    "reportsBalanceStatementsEnabled": true,
+                    "customReportsEnabled": [],
+                    "merchant": {
+                        "depositors": [],
+                        "id": "M_ci_N3xf_3Bj2-0a",
+                        "opaqueId": "M_ci_N3xf_3Bj2-0a",
+                        "country": "CI",
+                        "name": "Portal Play",
+                        "customFields": [
+                            {
+                                "__typename": "AmountField",
+                                "name": "__amount__",
+                                "displayName": "amount",
+                                "isProvidedByConfirmation": false,
+                                "isSavedInFavorites": false,
+                                "isAccountIdentifier": false,
+                                "minimum": null,
+                                "maximum": null,
+                                "feeFormula": null
+                            }
+                        ],
+                        "canSendB2bPayments": false,
+                        "businessPortalB2bMultilevelValidationEnabled": false,
+                        "businessPortalB2pMultilevelValidationEnabled": false,
+                        "b2bContactList": [],
+                        "accountNumber": "CI 28 66 30 78",
+                        "canTestCustomPaymentsIntegration": false,
+                        "settlementBankAccounts": []
+                    },
+                    "id": "biz_W_ci_6ISwFjjHQBtk",
+                    "wallet": {
+                        "currency": "CFA",
+                        "id": "W_ci_6ISwFjjHQBtk",
+                        "name": "Portal Play",
+                        "balance": "CFA 10",
+                        "pendingOutflowsTotal": "CFA 0",
+                        "kybTier": "KYB2",
+                        "country": "ci",
+                        "accessibleApis": [],
+                        "apiKeys": [],
+                        "webhooks": [],
+                        "businessSearchRequestUrls": []
+                    },
+                    "name": "Portal Play",
+                    "isGrossOnly": false,
+                    "hasBulkpayEnabled": false,
+                    "pendingPayments": [],
+                    "surrogateManagement": {
+                        "canManageSurrogates": false,
+                        "canEditRole": false,
+                        "canEditEmployeeNumber": false,
+                        "canEditPin": false,
+                        "canAssignMerchants": false,
+                        "businessSurrogateRoles": null,
+                        "surrogateAssignableMerchants": null
+                    },
+                    "onDemandReportRowLimit": 5000,
+                    "showSurrogateOptions": false,
+                    "searchableTransactionIdPrefixes": [
+                        "ATX_",
+                        "T_",
+                        "T",
+                        "RT_",
+                        "pt-",
+                        "b2b-",
+                        "cos-",
+                        "xot-"
+                    ],
+                    "canManageBusinessSearchRequestUrls": false,
+                    "fundingRequests": [],
+                    "pendingBulkPayment": null
+                },
+                "rolePermissions": [
+                    "REQUEST_SETTLEMENT",
+                    "MANAGE_BUSINESS_SEARCH_REQUEST_URLS",
+                    "MANAGE_BILL_PAYMENTS",
+                    "LOGIN_BUSINESS_PORTAL",
+                    "DOWNLOAD_REPORTS",
+                    "VIEW_BUSINESS_USERS",
+                    "APPROVE_BULK_PAYMENTS",
+                    "CANCEL_BULK_PAYMENTS",
+                    "MANAGE_API_KEYS",
+                    "CREATE_BULK_PAYMENTS",
+                    "LOGIN_BUSINESS_APP",
+                    "SEND_BULK_PAYMENTS",
+                    "CREATE_B2B_PAYMENTS",
+                    "MANAGE_STATIC_QR_COLLECTIONS",
+                    "VIEW_ALL_WALLET_TRANSACTIONS",
+                    "VIEW_WEBHOOKS",
+                    "DEPOSIT",
+                    "MANAGE_BUSINESS_USERS",
+                    "WITHDRAW_AT_AGENT",
+                    "FUND_SUB_ACCOUNTS",
+                    "VIEW_BULK_PAYMENTS",
+                    "REFUND_ALL_MERCHANT_PAYMENTS",
+                    "SEARCH_WALLET_TRANSACTIONS",
+                    "SEND_SINGLE_PAYMENTS",
+                    "TAKE_PAYMENTS",
+                    "FUND_BUSINESS",
+                    "MANAGE_WEBHOOKS",
+                    "VIEW_WALLET_BALANCE",
+                    "SEND_B2B_PAYMENTS",
+                    "VIEW_ALL_SUPERVISED_WALLET_TRANSACTIONS",
+                    "CREATE_SINGLE_PAYMENTS"
+                ],
+                "grossVolume": null,
+                "businessPortalNotice": null,
+                "snTaxEnabled": false,
+                "canSeeEmployeeId": false,
+                "user": {
+                    "name": "Samuel N'dri",
+                    "id": "U_Sgmlb2okWM6C"
+                },
+                "readableWallets": [
+                    {
+                        "name": "Portal Play",
+                        "walletOpaqueId": "W_ci_6ISwFjjHQBtk",
+                        "balance": "CFA 10.00000000",
+                        "supervisorName": null,
+                        "grossVolume": null
+                    }
+                ],
+                "id": "biz_U_Sgmlb2okWM6C",
+                "canRequestSettlements": false
+            },
+            "billTypes": [
+                {
+                    "id": "BT_canal_ci:U_Sgmlb2okWM6C",
+                    "name": "Canal+",
+                    "icon": "canal",
+                    "hasServerSideConfirmationMessage": true,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "card_number",
+                            "displayName": "Subscription Number",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 14,
+                            "maxLength": 14,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "MultiChoiceField",
+                            "name": "formula_id",
+                            "displayName": "Plan",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "choices": [
+                                {
+                                    "value": "1",
+                                    "displayName": "Access (5.000F)"
+                                },
+                                {
+                                    "value": "2",
+                                    "displayName": "Evasion (10.000F)"
+                                },
+                                {
+                                    "value": "4",
+                                    "displayName": "Access+ (15.000F)"
+                                },
+                                {
+                                    "value": "6",
+                                    "displayName": "Nouveau Tout Canal+ (25.000F)"
+                                }
+                            ]
+                        },
+                        {
+                            "__typename": "MultiChoiceField",
+                            "name": "duration",
+                            "displayName": "Duration",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "choices": [
+                                {
+                                    "value": "1",
+                                    "displayName": "1 month"
+                                },
+                                {
+                                    "value": "3",
+                                    "displayName": "3 months"
+                                }
+                            ]
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "feeFormula": null,
+                            "minimum": "CFA 0",
+                            "businessMaximum": "CFA 200000"
+                        }
+                    ],
+                    "disableInfo": null,
+                    "requiredCapabilities": [
+                        "MULTISELECT_FIELDS",
+                        "SERVER_CONFIRMATION_MESSAGES"
+                    ]
+                },
+                {
+                    "id": "BT_bollore_ci:U_Sgmlb2okWM6C",
+                    "name": "C\u00f4te D'Ivoire Terminal",
+                    "icon": "bollore",
+                    "hasServerSideConfirmationMessage": true,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "client_code",
+                            "displayName": "Client Code",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 1,
+                            "maxLength": null,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "TextField",
+                            "name": "invoice_number",
+                            "displayName": "Invoice Number",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 1,
+                            "maxLength": null,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "TextField",
+                            "name": "client_name",
+                            "displayName": "",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "minLength": null,
+                            "maxLength": null,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "feeFormula": null,
+                            "minimum": "CFA 0",
+                            "businessMaximum": "CFA 2000000"
+                        }
+                    ],
+                    "disableInfo": null,
+                    "requiredCapabilities": [
+                        "SERVER_CONFIRMATION_MESSAGES"
+                    ]
+                },
+                {
+                    "id": "BT_mena_ci:U_Sgmlb2okWM6C",
+                    "name": "Education Nationale - Inscription",
+                    "icon": "mena",
+                    "hasServerSideConfirmationMessage": true,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "student_matricule",
+                            "displayName": "Student ID number",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 9,
+                            "maxLength": 9,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "TextField",
+                            "name": "parent_contact",
+                            "displayName": "Parent's phone number",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 10,
+                            "maxLength": 10,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "TextField",
+                            "name": "school_code",
+                            "displayName": "",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "minLength": null,
+                            "maxLength": null,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "TextField",
+                            "name": "school_change",
+                            "displayName": "",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "minLength": null,
+                            "maxLength": null,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "TextField",
+                            "name": "token",
+                            "displayName": "",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "minLength": null,
+                            "maxLength": null,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "TextField",
+                            "name": "token_status",
+                            "displayName": "",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "minLength": null,
+                            "maxLength": null,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "TextField",
+                            "name": "school_name",
+                            "displayName": "School name",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "minLength": null,
+                            "maxLength": null,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "feeFormula": null,
+                            "minimum": "CFA 0",
+                            "businessMaximum": "CFA 250000"
+                        }
+                    ],
+                    "disableInfo": {
+                        "message": "D\u00e9sol\u00e9, ce service est actuellement indisponible. Merci de r\u00e9essayer ult\u00e9rieurement."
+                    },
+                    "requiredCapabilities": [
+                        "SERVER_CONFIRMATION_MESSAGES"
+                    ]
+                },
+                {
+                    "id": "BT_fer_ci:U_Sgmlb2okWM6C",
+                    "name": "FER PEAGE",
+                    "icon": "fer_ci",
+                    "hasServerSideConfirmationMessage": true,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "reload_id",
+                            "displayName": "Badge or account number (12 or 19 digits)",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 12,
+                            "maxLength": 19,
+                            "formatter": {
+                                "__typename": "TextFieldGroupedFormatter",
+                                "groupSize": 4,
+                                "separator": " "
+                            }
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "feeFormula": null,
+                            "minimum": "CFA 500",
+                            "businessMaximum": "CFA 100000"
+                        }
+                    ],
+                    "disableInfo": null,
+                    "requiredCapabilities": [
+                        "SERVER_CONFIRMATION_MESSAGES"
+                    ]
+                },
+                {
+                    "id": "BT_cie:U_Sgmlb2okWM6C",
+                    "name": "Factures CIE",
+                    "icon": "cie",
+                    "hasServerSideConfirmationMessage": true,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "client_reference",
+                            "displayName": "Identifier or Contract Reference",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 9,
+                            "maxLength": 12,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "TextField",
+                            "name": "invoice_reference",
+                            "displayName": "Invoice Reference",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "minLength": null,
+                            "maxLength": null,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "feeFormula": null,
+                            "minimum": "CFA 0",
+                            "businessMaximum": "CFA 2000000"
+                        }
+                    ],
+                    "disableInfo": null,
+                    "requiredCapabilities": [
+                        "SERVER_CONFIRMATION_MESSAGES"
+                    ]
+                },
+                {
+                    "id": "BT_sodeci:U_Sgmlb2okWM6C",
+                    "name": "Factures SODECI",
+                    "icon": "sodeci",
+                    "hasServerSideConfirmationMessage": true,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "client_reference",
+                            "displayName": "Identifier or Contract Reference",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 9,
+                            "maxLength": 9,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "TextField",
+                            "name": "invoice_reference",
+                            "displayName": "Invoice Reference",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "minLength": null,
+                            "maxLength": null,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "feeFormula": null,
+                            "minimum": "CFA 0",
+                            "businessMaximum": "CFA 2000000"
+                        }
+                    ],
+                    "disableInfo": null,
+                    "requiredCapabilities": [
+                        "SERVER_CONFIRMATION_MESSAGES"
+                    ]
+                },
+                {
+                    "id": "BT_pont_hkb:U_Sgmlb2okWM6C",
+                    "name": "Pont HKB",
+                    "icon": "pont_hkb",
+                    "hasServerSideConfirmationMessage": true,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "badge_id",
+                            "displayName": "Badge Number (8 or 19 digits)",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 8,
+                            "maxLength": 19,
+                            "formatter": {
+                                "__typename": "TextFieldGroupedFormatter",
+                                "groupSize": 4,
+                                "separator": " "
+                            }
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "feeFormula": null,
+                            "minimum": "CFA 500",
+                            "businessMaximum": "CFA 500000"
+                        }
+                    ],
+                    "disableInfo": null,
+                    "requiredCapabilities": [
+                        "SERVER_CONFIRMATION_MESSAGES"
+                    ]
+                },
+                {
+                    "id": "BT_cie_prepaid_ci:U_Sgmlb2okWM6C",
+                    "name": "Pr\u00e9pay\u00e9 CIE",
+                    "icon": "cie_prepaid",
+                    "hasServerSideConfirmationMessage": true,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "reference_or_metre_number",
+                            "displayName": "Reference or Metre Number",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 11,
+                            "maxLength": 13,
+                            "formatter": {
+                                "__typename": "TextFieldGroupedFormatter",
+                                "groupSize": 3,
+                                "separator": " "
+                            }
+                        },
+                        {
+                            "__typename": "MultiChoiceField",
+                            "name": "payment_type",
+                            "displayName": "Payment type",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "choices": [
+                                {
+                                    "value": "purchase_electricity",
+                                    "displayName": "Purchase Prepaid Electricity"
+                                },
+                                {
+                                    "value": "pay_arrears",
+                                    "displayName": "Debt Repayment"
+                                }
+                            ]
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "feeFormula": null,
+                            "minimum": "CFA 200",
+                            "businessMaximum": "CFA 2000000"
+                        }
+                    ],
+                    "disableInfo": {
+                        "message": "Sorry, this service is unavailable. Please try again later."
+                    },
+                    "requiredCapabilities": [
+                        "SERVER_CONFIRMATION_MESSAGES"
+                    ]
+                },
+                {
+                    "id": "BT_cnps:U_Sgmlb2okWM6C",
+                    "name": "RSTI CNPS",
+                    "icon": "cnps",
+                    "hasServerSideConfirmationMessage": true,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "entity_id",
+                            "displayName": "CNPS Number",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 12,
+                            "maxLength": 14,
+                            "formatter": {
+                                "__typename": "TextFieldGroupedFormatter",
+                                "groupSize": 4,
+                                "separator": " "
+                            }
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "feeFormula": null,
+                            "minimum": "CFA 5",
+                            "businessMaximum": "CFA 300000"
+                        }
+                    ],
+                    "disableInfo": null,
+                    "requiredCapabilities": [
+                        "SERVER_CONFIRMATION_MESSAGES"
+                    ]
+                },
+                {
+                    "id": "BT_sotra_ci:U_Sgmlb2okWM6C",
+                    "name": "SOTRA Carte Libert\u00e9",
+                    "icon": "sotra",
+                    "hasServerSideConfirmationMessage": false,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "card_number",
+                            "displayName": "Card number (the 14 characters following the dash)",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 14,
+                            "maxLength": 14,
+                            "formatter": {
+                                "__typename": "TextFieldGroupedFormatter",
+                                "groupSize": 2,
+                                "separator": " "
+                            }
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "feeFormula": null,
+                            "minimum": "CFA 10",
+                            "businessMaximum": "CFA 25000"
+                        }
+                    ],
+                    "disableInfo": null,
+                    "requiredCapabilities": []
+                },
+                {
+                    "id": "BT_startimes_ci:U_Sgmlb2okWM6C",
+                    "name": "StarTimes",
+                    "icon": "startimes",
+                    "hasServerSideConfirmationMessage": true,
+                    "userFee": null,
+                    "fields": [
+                        {
+                            "__typename": "TextField",
+                            "name": "card_number",
+                            "displayName": "Card number",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "minLength": 11,
+                            "maxLength": 11,
+                            "formatter": null
+                        },
+                        {
+                            "__typename": "MultiChoiceField",
+                            "name": "product_code",
+                            "displayName": "Package",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "choices": [
+                                {
+                                    "value": "IVC000",
+                                    "displayName": "Nova"
+                                },
+                                {
+                                    "value": "IVC001",
+                                    "displayName": "Smart"
+                                },
+                                {
+                                    "value": "IVC002",
+                                    "displayName": "Super"
+                                },
+                                {
+                                    "value": "IVC003",
+                                    "displayName": "English"
+                                },
+                                {
+                                    "value": "IVC005",
+                                    "displayName": "Tout StarTimes"
+                                }
+                            ]
+                        },
+                        {
+                            "__typename": "MultiChoiceField",
+                            "name": "duration",
+                            "displayName": "Duration",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": false,
+                            "choices": [
+                                {
+                                    "value": "1",
+                                    "displayName": "1 day"
+                                },
+                                {
+                                    "value": "7",
+                                    "displayName": "7 days"
+                                },
+                                {
+                                    "value": "30",
+                                    "displayName": "30 days"
+                                },
+                                {
+                                    "value": "60",
+                                    "displayName": "60 days"
+                                },
+                                {
+                                    "value": "90",
+                                    "displayName": "90 days"
+                                }
+                            ]
+                        },
+                        {
+                            "__typename": "AmountField",
+                            "name": "__amount__",
+                            "displayName": "amount",
+                            "defaultValue": null,
+                            "isProvidedByConfirmation": true,
+                            "feeFormula": null,
+                            "minimum": "CFA 0",
+                            "businessMaximum": "CFA 100000"
+                        }
+                    ],
+                    "disableInfo": null,
+                    "requiredCapabilities": [
+                        "MULTISELECT_FIELDS",
+                        "SERVER_CONFIRMATION_MESSAGES"
+                    ]
+                }
+            ],
+            "merchant": {
+                "currency": "CFA",
+                "wallet": {
+                    "balance": "CFA 10",
+                    "id": "W_ci_6ISwFjjHQBtk"
+                },
+                "fundableSubMerchants": [],
+                "id": "M_ci_N3xf_3Bj2-0a",
+                "country": "CI"
+            }
+        },
+        "isBusinessFundingDisabled": false
+    }
+}
