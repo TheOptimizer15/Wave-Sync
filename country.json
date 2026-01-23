@@ -1,0 +1,42 @@
+{
+    "ci": {
+        "value": "Côte d'Ivoire",
+        "attr": "[data-value='ci']"
+    },
+    "sn": {
+        "value": "Sénégale",
+        "attr": "[data-value='sn']"
+    },
+    "ug": {
+        "value": "Uganda",
+        "attr": "[data-value='ug']"
+    },
+    "ml": {
+        "value": "Mali",
+        "attr": "[data-value='ml']"
+    },
+    "bf": {
+        "value": "Burkina Faso",
+        "attr": "[data-value='bf']"
+    },
+    "gm": {
+        "value": "Gambie",
+        "attr": "[data-value='gm']"
+    },
+    "ne": {
+        "value": "Unknown",
+        "attr": "[data-value='ne']"
+    },
+    "cm": {
+        "value": "Cameroun",
+        "attr": "[data-value='cm']"
+    },
+    "sl": {
+        "value": "Unknown",
+        "attr": "[data-value='sl']"
+    },
+    "cd": {
+        "value": "Unknown",
+        "attr": "[data-value='cd']"
+    }
+}

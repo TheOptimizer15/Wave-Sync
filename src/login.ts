@@ -4,7 +4,8 @@ import { type Browser } from "puppeteer";
 import credentials from "../config.json" with { type: "json" };
 import appConfig from "../app.config.json" with { type: "json" };
 import { type Express } from "express";
-
+import country from "../country.json" with{type: "json"}
+import { otpEmitter } from "./emitter.js";
 // login to wave account
 
 export async function login(browser: Browser, app: Express) {
@@ -37,8 +38,10 @@ export async function login(browser: Browser, app: Express) {
         await login_page.locator("#country").wait();
         await login_page.locator("#country").click();
         // select country
-        console.log("Selection country");
-        await login_page.locator("[data-value='ci']").click();
+        console.log("Selecting country");
+        const selectedCountry = country.ci
+        await login_page.locator(selectedCountry.attr).click();
+        console.log(`Country selected: ${selectedCountry.value}`)
 
         // submit phone
         await login_page.type('#mobile', credentials.mobile_phone, { delay: 100 });
@@ -53,29 +56,51 @@ export async function login(browser: Browser, app: Express) {
 
         // opening url for otp code
         const otpCode = await new Promise<string>((resolve, reject) => {
-
+            console.log("Password filled waiting for otp");
+            // reach their webhook for otp notification alert
+            if (appConfig.webhook.alert_otp) {
+                fetch(appConfig.webhook.url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "event": "otp:required",
+                        "time": new Date().toLocaleTimeString(),
+                        "time_stamp": Date.now()
+                    })
+                })
+            }
             // set timeout to close the page and reject if the not otp is sent to the server
 
             const rejectTimeout = setTimeout(() => {
+                if (appConfig.webhook.alert_otp) {
+                    fetch(appConfig.webhook.url, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "event": "otp.failed",
+                            "time": new Date().toLocaleTimeString(),
+                            "time_stamp": Date.now()
+                        })
+                    })
+                }
+                otpEmitter.off("otp", otpListener)
+
                 reject(new Error("OTP_TIMEOUT"));
             }, appConfig.timeout)
 
-            // create endpoint
-            app.post("/otp", (req, res) => {
-                const { code } = req.body
-
-                if (!code) {
-                    console.log("Requête reçue sans champ 'code'");
-                    res.status(400).json({ status: "error", message: "missing code" });
-                    clearTimeout(rejectTimeout);
-                    reject(new Error("OTP_NOT_PROVIDED"));
-                }
-
+            // define listener for retreiving otp
+            const otpListener = (code: string) => {
                 clearTimeout(rejectTimeout);
-                console.log("OTP received:", code);
-                res.json({ status: "success", message: "OTP retrieved" });
-                resolve(code.toString());
-            });
+                console.log(`Otp retreived ${code}`);
+                resolve(code);
+            };
+
+            // listen to otp emiter
+            otpEmitter.once("otp", otpListener)
 
             console.log("Endpoint active at post : /otp")
 
@@ -97,6 +122,20 @@ export async function login(browser: Browser, app: Express) {
 
         if (is_login_success) {
             console.log("Successfully login");
+            if (appConfig.webhook.alert_login) {
+                fetch(appConfig.webhook.url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "event": "login:success",
+                        "time": new Date().toLocaleTimeString(),
+                        "time_stamp": Date.now(),
+                        "message": "Su"
+                    })
+                })
+            }
             await login_page.close();
         } else {
             throw new Error("Could not login, retry proecess or check password")
@@ -105,6 +144,20 @@ export async function login(browser: Browser, app: Express) {
 
 
     } catch (error: any) {
+        if (appConfig.webhook.alert_login) {
+            fetch(appConfig.webhook.url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "event": "login:failed",
+                    "time": new Date().toLocaleTimeString(),
+                    "time_stamp": Date.now(),
+                    "message": error.message
+                })
+            })
+        }
         await login_page.close();
         console.log(error?.message)
         console.log("Closing login page")

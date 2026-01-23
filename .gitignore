@@ -7,7 +7,6 @@ build/
 
 # Configuration and Secrets
 config.json
-app.config.json
 .env
 
 # Logs

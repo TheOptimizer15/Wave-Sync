@@ -15,10 +15,11 @@ export async function status(browser: Browser) {
         if (isLoggedIn) {
             console.log("Account is active");
             await home_page.close();
-             return {
+            return {
                 success: true,
                 message: "Account connected",
-                time: new Date().toLocaleDateString("fr")
+                time: new Date().toLocaleDateString("fr"),
+                status: 200
             };
         } else {
             console.log("Account is inactive");
@@ -26,7 +27,8 @@ export async function status(browser: Browser) {
             return {
                 success: false,
                 message: "Account not connected",
-                time: new Date().toLocaleDateString()
+                time: new Date().toLocaleDateString(),
+                status: 401
             };
         }
 
@@ -35,5 +37,11 @@ export async function status(browser: Browser) {
         await home_page.close();
         console.log(error?.message);
         console.log("Closing page")
+        return {
+            success: false,
+            message: error.message,
+            time: new Date().toLocaleDateString(),
+            status: 500
+        };
     }
 }
