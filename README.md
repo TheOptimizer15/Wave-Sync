@@ -22,7 +22,7 @@
 1. **Clone the repository:**
 ```bash
 git clone https://github.com/TheOptimizer15/Wave-Sync.git
-cd wave-sync
+cd Wave-Sync
 
 ```
 
