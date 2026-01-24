@@ -11,12 +11,17 @@ export async function transactions(browser: Browser) {
             timeout: appConfig.timeout
         });
 
-        const isLoggedIn = await transaction_page.evaluate(() =>
+        const is_logged_in = await transaction_page.evaluate(() =>
             document.body.innerText.includes('Solde')
         );
 
-        if(!isLoggedIn){
-            throw new Error("Not logged in");
+        if (!is_logged_in) {
+            return {
+                success: false,
+                message: "Account not connected",
+                time: new Date().toLocaleDateString(),
+                status: 401
+            }
         }
 
         console.log("Loading transactions...");
@@ -24,7 +29,7 @@ export async function transactions(browser: Browser) {
         await transaction_page.waitForSelector("#limit-field", { timeout: appConfig.timeout });
 
         // Create a promise that resolves when the specific GraphQL response is intercepted
-        const interceptResponse = new Promise((resolve, reject) => {
+        const transaction_response = new Promise((resolve, reject) => {
             const timeout = setTimeout(() => reject(new Error("Transaction timeout")), 30000);
 
             transaction_page.on('response', async (response) => {
@@ -51,8 +56,8 @@ export async function transactions(browser: Browser) {
 
                             clearTimeout(timeout);
                             resolve(paymentHistories);
-                        } catch (e) {
-                            // If response isn't JSON or body is consumed
+                        } catch (e: any) {
+                            throw new Error(e.message)
                         }
                     }
                 }
@@ -65,7 +70,7 @@ export async function transactions(browser: Browser) {
         await transaction_page.keyboard.press('Enter');
 
         // Wait for the promise to resolve with data
-        const data = await interceptResponse;
+        const data = await transaction_response;
 
         await transaction_page.close();
 
@@ -75,7 +80,9 @@ export async function transactions(browser: Browser) {
             success: true,
             message: "transactions retrieved",
             error: null,
-            transactions: data
+            transactions: data,
+            status: 200,
+            
         };
 
     } catch (error: any) {
@@ -83,9 +90,10 @@ export async function transactions(browser: Browser) {
         console.error("Error:", error.message);
         return {
             success: false,
-            message: "Error occurred",
+            message: error.message,
             error: error.message,
-            transactions: null
+            transactions: null,
+            status: 500
         };
     }
 }

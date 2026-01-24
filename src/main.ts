@@ -37,7 +37,6 @@ app.get("/login", async (req, res) => {
         action: "PORTAL_LOGIN"
     });
     await login(browser, app);
-
 });
 
 app.post("/otp", (req, res) => {
@@ -66,5 +65,16 @@ app.get("/status", async (req, res) => {
 
 app.get("/transactions", async (req, res) => {
     const response = await transactions(browser);
-    res.json(response);
+    res.status(response.status).json(response);
+});
+
+app.get("/config", (req, res)=>{
+    const config = {
+        event: {
+            "otp:failed" : "Returned when otp required and not filled after 4mn",
+            "login:failed": "Returned when either otp failed or password is incorrect"
+        }
+    };
+
+    res.status(200).json(config);
 });
