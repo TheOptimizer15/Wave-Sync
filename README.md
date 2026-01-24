@@ -25,7 +25,7 @@ Here is the updated **README.md** incorporating the complete `country.json` conf
 
 1. **Clone the repository:**
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/TheOptimizer15/Wave-Sync.git
 cd wave-sync
 
 ```
