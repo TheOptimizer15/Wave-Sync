@@ -1,7 +1,3 @@
-Here is the updated **README.md** incorporating the complete `country.json` configuration you provided.
-
----
-
 # Wave Sync
 
 **Wave Sync** is a TypeScript-based API wrapper and automation tool for the Wave Business Portal. It leverages **Puppeteer** to automate browser interactions and **Express** to provide a RESTful API interface. This allows developers to programmatically log in, handle OTPs, check account status, and retrieve transaction history from a Wave Business account.
