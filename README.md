@@ -1,140 +1,223 @@
-# Wave Business Automation API
+Here is the updated **README.md** incorporating the complete `country.json` configuration you provided.
 
-A Node.js/TypeScript service that automates interactions with the Wave Business Portal. It provides a RESTful interface to trigger logins, fetch transaction history, and check account status.
+---
 
-## 🚀 How it Works
+# Wave Sync
 
-1. **Express Server:** Listens for requests to trigger automation tasks.
-2. **Puppeteer:** Launches a headless Chromium instance to navigate the portal.
-3. **Network Interception:** Listens to GraphQL responses to extract transaction data with 100% accuracy (avoiding UI-based scraping).
-4. **OTP Bridge:** Provides a POST endpoint to inject the 2FA code into the live browser session.
+**Wave Sync** is a TypeScript-based API wrapper and automation tool for the Wave Business Portal. It leverages **Puppeteer** to automate browser interactions and **Express** to provide a RESTful API interface. This allows developers to programmatically log in, handle OTPs, check account status, and retrieve transaction history from a Wave Business account.
 
-## 🛠 Prerequisites
+## 🚀 Features
 
-- Node.js (v18+)
-- Puppeteer / Chromium
-- A valid Wave Business Account (Côte d'Ivoire supported)
+* **Automated Login:** Handles the login flow for the Wave Business Portal, including country selection and credential entry.
+* **OTP Management via API:** Since Wave requires SMS OTPs, this service exposes an endpoint to receive the OTP programmatically and feed it into the automated browser instance.
+* **Transaction Scraping:** Intercepts GraphQL network requests to retrieve clean, parsed transaction history (Deposits, Payments, Fees).
+* **Status Monitoring:** Checks if the account is currently connected/active.
+* **Webhooks:** Sends real-time webhooks for critical events (OTP required, Login success/failure).
 
-## 📦 Installation
+## 🛠️ Tech Stack
 
-1. Clone the repository.
-2. Install dependencies:
-   ```bash
-   npm install
+* **Runtime:** Node.js
+* **Language:** TypeScript
+* **Browser Automation:** Puppeteer
+* **Server:** Express.js
 
-   This is a sophisticated Wave Business Portal Automation API. It transforms the official Wave (Mobile Money) Business web portal into a programmatic REST API using Puppeteer, allowing for automated transaction monitoring and status checks.
+## ⚙️ Installation
 
-Project Description
-This project solves the lack of a traditional callback/webhook system for some merchant tiers by using a "Headless Browser as a Service" approach. It automates the multi-step authentication process (Login -> Password -> OTP via API) and intercepts internal GraphQL network traffic to extract real-time transaction data.
+1. **Clone the repository:**
+```bash
+git clone <your-repo-url>
+cd wave-sync
 
-Key Features:
+```
 
-Programmatic Login: Handles country selection, phone/password entry, and session persistence.
 
-Dynamic OTP Injection: Exposes a /otp endpoint to receive two-factor codes from an external SMS listener or manual entry.
+2. **Install dependencies:**
+```bash
+npm install
 
-Network Interception: Instead of fragile HTML scraping, it intercepts the business_graphql responses to get clean, structured JSON data directly from Wave's servers.
+```
 
-Status Monitoring: A dedicated heartbeat endpoint to verify if the session is still active.
 
-README.md
-Markdown
+3. **Build the project (if using tsc):**
+```bash
+npm run build
 
-# Wave Business Automation API
+```
 
-A Node.js/TypeScript service that automates interactions with the Wave Business Portal. It provides a RESTful interface to trigger logins, fetch transaction history, and check account status.
 
-## 🚀 How it Works
 
-1. **Express Server:** Listens for requests to trigger automation tasks.
-2. **Puppeteer:** Launches a headless Chromium instance to navigate the portal.
-3. **Network Interception:** Listens to GraphQL responses to extract transaction data with 100% accuracy (avoiding UI-based scraping).
-4. **OTP Bridge:** Provides a POST endpoint to inject the 2FA code into the live browser session.
+## 📁 Configuration
 
-## 🛠 Prerequisites
+To run this project, you must create three specific JSON configuration files in the root (or `src/` depending on your build setup) directory.
 
-- Node.js (v18+)
-- Puppeteer / Chromium
-- A valid Wave Business Account (Côte d'Ivoire supported)
+### 1. `config.json`
 
-## 📦 Installation
+Contains your sensitive credentials.
 
-1. Clone the repository.
-2. Install dependencies:
-   ```bash
-   npm install
-Configure your credentials in config.json:
-
-JSON
-
+```json
 {
-  "mobile_phone": "0102030405",
-  "password": "your_password"
+  "mobile_phone": "0123456789",
+  "password": "your_secure_password"
 }
 
-This is a sophisticated Wave Business Portal Automation API. It transforms the official Wave (Mobile Money) Business web portal into a programmatic REST API using Puppeteer, allowing for automated transaction monitoring and status checks.
+```
 
-Project Description
-This project solves the lack of a traditional callback/webhook system for some merchant tiers by using a "Headless Browser as a Service" approach. It automates the multi-step authentication process (Login -> Password -> OTP via API) and intercepts internal GraphQL network traffic to extract real-time transaction data.
+### 2. `app.config.json`
 
-Key Features:
+Controls the application logic and URLs.
 
-Programmatic Login: Handles country selection, phone/password entry, and session persistence.
-
-Dynamic OTP Injection: Exposes a /otp endpoint to receive two-factor codes from an external SMS listener or manual entry.
-
-Network Interception: Instead of fragile HTML scraping, it intercepts the business_graphql responses to get clean, structured JSON data directly from Wave's servers.
-
-Status Monitoring: A dedicated heartbeat endpoint to verify if the session is still active.
-
-README.md
-Markdown
-
-# Wave Business Automation API
-
-A Node.js/TypeScript service that automates interactions with the Wave Business Portal. It provides a RESTful interface to trigger logins, fetch transaction history, and check account status.
-
-## 🚀 How it Works
-
-1. **Express Server:** Listens for requests to trigger automation tasks.
-2. **Puppeteer:** Launches a headless Chromium instance to navigate the portal.
-3. **Network Interception:** Listens to GraphQL responses to extract transaction data with 100% accuracy (avoiding UI-based scraping).
-4. **OTP Bridge:** Provides a POST endpoint to inject the 2FA code into the live browser session.
-
-## 🛠 Prerequisites
-
-- Node.js (v18+)
-- Puppeteer / Chromium
-- A valid Wave Business Account (Côte d'Ivoire supported)
-
-## 📦 Installation
-
-1. Clone the repository.
-2. Install dependencies:
-   ```bash
-   npm install
-Configure your credentials in config.json:
-
-JSON
-
+```json
 {
-  "mobile_phone": "0102030405",
-  "password": "your_password"
+  "wave_portal_url": "https://business.wave.com/login",
+  "wave_transaction_url": "https://business.wave.com/transactions",
+  "timeout": 60000,
+  "webhook": {
+    "url": "https://your-external-webhook-listener.com/events",
+    "alert_otp": true,
+    "alert_login": true
+  }
 }
-🚥 API Endpoints
-1. Start Login
-GET /login Starts the Puppeteer browser, enters credentials, and waits for the OTP.
 
-2. Submit OTP
-POST /otp Used to send the OTP code received on your phone to the automation engine. Body: { "code": "123456" }
+```
 
-3. Check Status
-GET /status Returns whether the browser session is currently authenticated and active.
+### 3. `country.json`
 
-4. Fetch Transactions
-GET /transactions Triggers a refresh on the portal and intercepts the transaction list. Returns: A cleaned list of recent MerchantSaleEntry items (Amount, Fee, Phone, Client Name, etc.).
+Maintained to handle the latest CSS selectors for country selection. This file allows the bot to support multiple regions and adapt to UI changes.
 
-⚠️ Important Note on Hosting
-This project uses Puppeteer. If deploying to a VPS (recommended), ensure you install the necessary build-essential libraries for Chromium. Shared hosting is generally not supported due to missing system dependencies and high RAM usage.
+```json
+{
+    "ci": {
+        "value": "Côte d'Ivoire",
+        "attr": "[data-value='ci']"
+    },
+    "sn": {
+        "value": "Sénégale",
+        "attr": "[data-value='sn']"
+    },
+    "ug": {
+        "value": "Uganda",
+        "attr": "[data-value='ug']"
+    },
+    "ml": {
+        "value": "Mali",
+        "attr": "[data-value='ml']"
+    },
+    "bf": {
+        "value": "Burkina Faso",
+        "attr": "[data-value='bf']"
+    },
+    "gm": {
+        "value": "Gambie",
+        "attr": "[data-value='gm']"
+    },
+    "ne": {
+        "value": "Unknown",
+        "attr": "[data-value='ne']"
+    },
+    "cm": {
+        "value": "Cameroun",
+        "attr": "[data-value='cm']"
+    },
+    "sl": {
+        "value": "Unknown",
+        "attr": "[data-value='sl']"
+    },
+    "cd": {
+        "value": "Unknown",
+        "attr": "[data-value='cd']"
+    }
+}
+
+```
+
+## ▶️ Usage
+
+Start the server:
+
+```bash
+npm start
+# or directly with ts-node
+npx ts-node src/main.ts
+
+```
+
+The server defaults to port `3000` (or `process.env.PORT`).
+
+## 📡 API Endpoints
+
+### 1. Start Login Process
+
+Triggers the Puppeteer browser to open and attempt login.
+
+* **URL:** `GET /login`
+* **Response:**
+```json
+{
+  "success": true,
+  "message": "Process started",
+  "action": "PORTAL_LOGIN"
+}
+
+```
 
 
+* **Behavior:** This will keep the browser open. If an OTP is required, it triggers the `otp:required` webhook.
+
+### 2. Submit OTP
+
+If the login process pauses for an OTP, submit the code here.
+
+* **URL:** `POST /otp`
+* **Body:**
+```json
+{ "code": "1234" }
+
+```
+
+
+* **Response:**
+```json
+{ "succes": true, "message": "Otp submitted" }
+
+```
+
+
+
+### 3. Get Transactions
+
+Retrieves the history of transactions.
+
+* **URL:** `GET /transactions`
+* **Response:** Returns a JSON list of transactions, including ID, amount, fees, sender name, and phone.
+
+### 4. Check Status
+
+Checks if the browser session is currently logged in.
+
+* **URL:** `GET /status`
+* **Response:**
+```json
+{
+  "success": true,
+  "message": "Account connected",
+  "status": 200
+}
+
+```
+
+
+
+## 🪝 Webhook Events
+
+The application sends POST requests to the URL defined in `app.config.json`.
+
+| Event Name | Trigger | Payload Data |
+| --- | --- | --- |
+| `otp:required` | Login page requested SMS code | `event`, `time`, `time_stamp` |
+| `otp:failed` | OTP timed out (approx 4 mins) | `event`, `time`, `time_stamp` |
+| `login:success` | Login completed successfully | `event`, `time`, `time_stamp` |
+| `login:failed` | Wrong password or other error | `event`, `time`, `message` |
+
+## ⚠️ Disclaimer
+
+This project is not affiliated with Wave Digital Finance. It is an unofficial automation tool. Use it responsibly and ensure you comply with Wave's Terms of Service. Automated access to financial accounts may carry risks.
