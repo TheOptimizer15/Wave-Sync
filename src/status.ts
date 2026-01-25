@@ -18,7 +18,7 @@ export async function status(browser: Browser) {
             return {
                 success: true,
                 message: "Account connected",
-                time: new Date().toLocaleDateString("fr"),
+                time: Date.now(),
                 status: 200
             };
         } else {
@@ -27,8 +27,8 @@ export async function status(browser: Browser) {
             return {
                 success: false,
                 message: "Account not connected",
-                time: new Date().toLocaleDateString(),
-                status: 401
+                status: 401,
+                time: Date.now()
             };
         }
 
@@ -40,7 +40,7 @@ export async function status(browser: Browser) {
         return {
             success: false,
             message: error.message,
-            time: new Date().toLocaleDateString(),
+            time: Date.now(),
             status: 500
         };
     }

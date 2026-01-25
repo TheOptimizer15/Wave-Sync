@@ -19,7 +19,7 @@ export async function transactions(browser: Browser) {
             return {
                 success: false,
                 message: "Account not connected",
-                time: new Date().toLocaleDateString(),
+                time: Date.now(),
                 status: 401
             }
         }
@@ -45,14 +45,14 @@ export async function transactions(browser: Browser) {
                             const paymentHistories = (await jsonResponse)?.data?.me?.businessUser?.business?.walletHistory?.historyEntries?.filter(
                                 (entry) => entry?.__typename === "MerchantSaleEntry"
                             ).map((entry) => ({
-                                id: entry.id,
-                                amount: entry.amount.replace("CFA ", ""),
-                                fee: entry.feeAmount.replace("CFA ", ""),
+                                payment_reference: entry.id,
                                 transfer_id: entry.transferId,
-                                phone: entry.customerMobile.replace(/\s+/g, ''),
+                                fee: entry.feeAmount.replace("CFA ", ""),
+                                amount: entry.amount.replace("CFA ", ""),
                                 client_name: entry.customerName,
+                                phone: entry.customerMobile.replace(/\s+/g, ''),
                                 time: entry.whenEntered,
-                            }));
+                            })).reverse();
 
                             clearTimeout(timeout);
                             resolve(paymentHistories);
@@ -82,7 +82,8 @@ export async function transactions(browser: Browser) {
             error: null,
             transactions: data,
             status: 200,
-            
+            time: Date.now()
+
         };
 
     } catch (error: any) {
@@ -93,7 +94,8 @@ export async function transactions(browser: Browser) {
             message: error.message,
             error: error.message,
             transactions: null,
-            status: 500
+            status: 500,
+            time: Date.now()
         };
     }
 }

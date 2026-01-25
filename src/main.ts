@@ -8,7 +8,7 @@ import { otpEmitter } from "./emitter.js";
 
 // init browser
 const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     slowMo: 50
 });
 

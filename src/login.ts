@@ -69,21 +69,20 @@ export async function login(browser: Browser, app: Express) {
                 });
             }
 
-             // define listener for retreiving otp
+            // define listener for retreiving otp
             const otpListener = (code: string) => {
                 clearTimeout(rejectTimeout);
                 console.log(`Otp retreived ${code}`);
                 resolve(code);
             };
-            
+
             // set timeout to close the page and reject if the not otp is sent to the server
 
             const rejectTimeout = setTimeout(() => {
                 if (appConfig.webhook.alert_otp) {
                     callWebhook(appConfig.webhook.url, {
                         event: "otp:failed",
-                        time: new Date().toLocaleTimeString(),
-                        time_stamp: Date.now(),
+                        time: Date.now()
                     });
                 }
                 otpEmitter.off("otp", otpListener);
@@ -114,8 +113,7 @@ export async function login(browser: Browser, app: Express) {
         if (appConfig.webhook.alert_login) {
             callWebhook(appConfig.webhook.url, {
                 event: "login:success",
-                time: new Date().toLocaleTimeString(),
-                time_stamp: Date.now(),
+                time: Date.now()
             });
         }
         await login_page.close();
@@ -123,9 +121,7 @@ export async function login(browser: Browser, app: Express) {
         if (appConfig.webhook.alert_login) {
             callWebhook(appConfig.webhook.url, {
                 event: "login:failed",
-                time: new Date().toLocaleTimeString(),
-                time_stamp: Date.now(),
-                message: error.message,
+                time: Date.now()
             });
         }
         await login_page.close();
