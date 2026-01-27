@@ -1,7 +1,6 @@
 // login.ts
 
 import { type Browser } from "puppeteer";
-import credentials from "../config.json" with { type: "json" };
 import appConfig from "../app.config.json" with { type: "json" };
 import { type Express } from "express";
 import country from "../country.json" with { type: "json" };
