@@ -16,3 +16,7 @@ yarn-error.log*
 
 # OS files
 .DS_Store
+
+# Store cookies (except demo file)
+stores/*
+!stores/store_id_test.json
