@@ -13,9 +13,9 @@
     "puppeteer": "^24.35.0"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "@types/node": "^25.0.9",
     "@types/express": "^5.0.6",
-    "tsx": "^3.12.8"
+    "@types/node": "^25.0.9",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }
