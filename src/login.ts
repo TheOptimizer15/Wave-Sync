@@ -7,15 +7,26 @@ import { type Express } from "express";
 import country from "../country.json" with { type: "json" };
 import { otpEmitter } from "./emitter.js";
 import { callWebhook } from "./webhook.js";
+import puppeteer from "puppeteer";  
+import { store_cookie } from "./cookie.js";
 
 // login to wave account
 
-export async function login(browser: Browser, app: Express) {
-    // get the password
-    const phone = credentials.mobile_phone;
-    const password = credentials.password;
+// UPDATE: Login to wave directly with the user given credentials
+// after login get the cookie named s_id and store it in a json file named as the store id
+// the json file will be stored in a folder named stores
+// Use to load transactions, and account status
+// if no json file for the store, throw error to trigger login:failed event
 
-    // create page
+export async function login(store_id: string, phone: string, password: string) {
+
+    // open browser for login to account
+    const browser = await puppeteer.launch({
+        headless: true,
+        slowMo: 50
+    });
+
+    // open page
     const login_page = await browser.newPage();
     login_page.setViewport({
         height: 1920,
@@ -25,17 +36,9 @@ export async function login(browser: Browser, app: Express) {
     try {
         await login_page.goto(appConfig.wave_portal_url, {
             waitUntil: "networkidle2",
+
         });
         console.log("Opening wave portal login page");
-
-        const isLoginPage = await login_page.evaluate(() =>
-            document.body.innerText.includes("Wave Business Portal"),
-        );
-
-        if (!isLoginPage) {
-            // if on login page cancel the process
-            throw new Error("Account already logged in");
-        }
 
         // fill the form with phone and password
         await login_page.locator("#country").wait();
@@ -47,17 +50,17 @@ export async function login(browser: Browser, app: Express) {
         console.log(`Country selected: ${selectedCountry.value}`);
 
         // submit phone
-        await login_page.type("#mobile", credentials.mobile_phone, { delay: 100 });
+        await login_page.type("#mobile", phone, { delay: 100 });
         await login_page.locator('button[type="submit"]').click();
         console.log("Filling phone number");
 
         // password
         await login_page.locator("#password").click();
-        await login_page.locator("#password").fill(credentials.password);
+        await login_page.locator("#password").fill(password);
         await login_page.locator('button[type="submit"]').click();
         console.log("Filling password");
 
-        // opening url for otp code
+        // listen to otp event
         const otpCode = await new Promise<string>((resolve, reject) => {
             console.log("Password filled waiting for otp");
             // reach their webhook for otp notification alert
@@ -110,6 +113,12 @@ export async function login(browser: Browser, app: Express) {
         await login_page.waitForSelector("::-p-text(Solde)", { timeout: appConfig.timeout });
 
         console.log("Successfully login");
+
+        // store the cookie if login success
+        const s_id_cookie = (await browser.cookies()).filter((cookie) => cookie.name === "s_id")[0].value;
+        await store_cookie(store_id, s_id_cookie);
+
+        // send webhook if enabled
         if (appConfig.webhook.alert_login) {
             callWebhook(appConfig.webhook.url, {
                 event: "login:success",
@@ -117,6 +126,7 @@ export async function login(browser: Browser, app: Express) {
             });
         }
         await login_page.close();
+        await browser.close();
     } catch (error: any) {
         if (appConfig.webhook.alert_login) {
             callWebhook(appConfig.webhook.url, {
@@ -125,6 +135,7 @@ export async function login(browser: Browser, app: Express) {
             });
         }
         await login_page.close();
+        await browser.close();
         console.log(error?.message);
         console.log("Closing login page");
     }
