@@ -22,7 +22,7 @@ export async function login(store_id: string, phone: string, password: string) {
 
     // open browser for login to account
     const browser = await puppeteer.launch({
-        headless: true,
+        headless: false,
         slowMo: 50
     });
 
@@ -117,6 +117,7 @@ export async function login(store_id: string, phone: string, password: string) {
         // store the cookie if login success
         const s_id_cookie = (await browser.cookies()).filter((cookie) => cookie.name === "s_id")[0].value;
         await store_cookie(store_id, s_id_cookie);
+        console.log(s_id_cookie);
 
         // send webhook if enabled
         if (appConfig.webhook.alert_login) {

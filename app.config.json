@@ -1,10 +1,12 @@
 {
   "webhook": {
     "url": "http://localhost:3500/webhook",
-       "alert_otp": true,
-       "alert_login": true
+    "alert_otp": true,
+    "alert_login": true,
+    "alert_no_config": true,
+    "alert_session_expired": true
   },
-    "wave_portal_url":"https://business.wave.com",
-    "wave_transaction_url":"https://business.wave.com/transactions",
-    "timeout":  240000
+  "wave_portal_url": "https://business.wave.com",
+  "wave_transaction_url": "https://business.wave.com/transactions",
+  "timeout": 240000
 }
