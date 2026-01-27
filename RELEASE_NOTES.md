@@ -18,6 +18,12 @@ This release introduces a complete session management system with support for mu
 - Sessions are automatically loaded and injected into browser requests
 - Supports multiple Wave Business accounts simultaneously
 
+#### Secure Credential Handling
+
+- **Removed `config.json`** - Credentials are no longer stored in config files
+- Phone and password are now passed securely via the `/login` API request body
+- Each login request includes `store_id`, `phone`, and `password`
+
 #### New API Endpoints
 
 - `GET /transactions/:store_id` - Get transactions for a specific store
@@ -45,7 +51,12 @@ This release introduces a complete session management system with support for mu
 
 ### 📁 Configuration Changes
 
-Add the following new options to your `app.config.json`:
+**Removed:**
+
+- `config.json` - No longer needed, credentials passed via API
+- `config.example.json` - Removed
+
+**Updated `app.config.json`:**
 
 ```json
 {
@@ -65,8 +76,9 @@ Add the following new options to your `app.config.json`:
 - `src/status.ts` - Added cookie loading, injection, and webhook alerts
 - `src/cookie.ts` - Added ESM path resolution and delete_cookie function
 - `app.config.json` - Added new webhook alert options
-- `README.md` - Updated documentation for v1.1.0
-- `.gitignore` - Added stores folder (except demo file)
+- `README.md` - Updated documentation, removed config.json references
+- `.gitignore` - Updated for stores folder, removed config.json
+- **Deleted:** `config.json`, `config.example.json`
 
 ---
 
@@ -74,13 +86,22 @@ Add the following new options to your `app.config.json`:
 
 - `/transactions` endpoint now requires store_id parameter: `/transactions/:store_id`
 - `/status` endpoint now requires store_id parameter: `/status/:store_id`
-- Login endpoint now requires `store_id` in request body
+- Login endpoint now requires `store_id`, `phone`, and `password` in request body
+- `config.json` has been removed - migrate credentials to API requests
 
 ---
 
 ### 🚀 Upgrade Guide
 
-1. Update your API calls to include `store_id` in the URL path
-2. Add `store_id` to your login request body
-3. Add new webhook options to `app.config.json` if you want session alerts
-4. Existing session cookies will need to be regenerated via login
+1. **Remove config.json** - Delete your existing config.json file
+2. **Update login calls** - Pass credentials in the request body:
+   ```json
+   {
+     "store_id": "my_store",
+     "phone": "0123456789",
+     "password": "your_password"
+   }
+   ```
+3. **Update API paths** - Add `store_id` to transaction and status URLs
+4. **Add webhook options** - Add new alert options to `app.config.json`
+5. **Regenerate sessions** - Existing cookies need to be regenerated via login

@@ -6,7 +6,6 @@ dist/
 build/
 
 # Configuration and Secrets
-config.json
 .env
 
 # Logs

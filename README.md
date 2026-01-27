@@ -56,20 +56,11 @@ npm run build
 
 ## 📁 Configuration
 
-To run this project, you must create three specific JSON configuration files in the root (or `src/` depending on your build setup) directory.
+To run this project, you must create two JSON configuration files in the root directory.
 
-### 1. `config.json`
+> **Note:** Credentials (phone, password) are no longer stored in config files. They are passed securely via the API request body when calling the `/login` endpoint.
 
-Contains your sensitive credentials.
-
-```json
-{
-  "mobile_phone": "0123456789",
-  "password": "your_secure_password"
-}
-```
-
-### 2. `app.config.json`
+### 1. `app.config.json`
 
 Controls the application logic and URLs.
 
@@ -88,7 +79,7 @@ Controls the application logic and URLs.
 }
 ```
 
-### 3. `country.json`
+### 2. `country.json`
 
 Maintained to handle the latest CSS selectors for country selection. This file allows the bot to support multiple regions and adapt to UI changes.
 
