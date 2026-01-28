@@ -5,7 +5,7 @@ import appConfig from "../app.config.json" with { type: "json" };
 import { type Express } from "express";
 import country from "../country.json" with { type: "json" };
 import { otpEmitter } from "./emitter.js";
-import { callWebhook } from "./webhook.js";
+import { sendWebhook } from "./webhook.js";
 import puppeteer from "puppeteer";  
 import { store_cookie } from "./cookie.js";
 
@@ -21,7 +21,7 @@ export async function login(store_id: string, phone: string, password: string) {
 
     // open browser for login to account
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         slowMo: 50
     });
 
@@ -64,7 +64,7 @@ export async function login(store_id: string, phone: string, password: string) {
             console.log("Password filled waiting for otp");
             // reach their webhook for otp notification alert
             if (appConfig.webhook.alert_otp) {
-                callWebhook(appConfig.webhook.url, {
+                sendWebhook(appConfig.webhook.url, {
                     event: "otp:required",
                     time: new Date().toLocaleTimeString(),
                     time_stamp: Date.now(),
@@ -82,7 +82,7 @@ export async function login(store_id: string, phone: string, password: string) {
 
             const rejectTimeout = setTimeout(() => {
                 if (appConfig.webhook.alert_otp) {
-                    callWebhook(appConfig.webhook.url, {
+                    sendWebhook(appConfig.webhook.url, {
                         event: "otp:failed",
                         time: Date.now()
                     });
@@ -120,7 +120,7 @@ export async function login(store_id: string, phone: string, password: string) {
 
         // send webhook if enabled
         if (appConfig.webhook.alert_login) {
-            callWebhook(appConfig.webhook.url, {
+            sendWebhook(appConfig.webhook.url, {
                 event: "login:success",
                 time: Date.now()
             });
@@ -129,7 +129,7 @@ export async function login(store_id: string, phone: string, password: string) {
         await browser.close();
     } catch (error: any) {
         if (appConfig.webhook.alert_login) {
-            callWebhook(appConfig.webhook.url, {
+            sendWebhook(appConfig.webhook.url, {
                 event: "login:failed",
                 time: Date.now()
             });

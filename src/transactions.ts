@@ -47,7 +47,7 @@ export async function transactions(browser: Browser, store_id: string) {
 
   try {
     // Inject the s_id cookie before navigating
-    await transaction_page.setCookie({
+    await browser.setCookie({
       name: "s_id",
       value: cookieData.s_id,
       domain: "business.wave.com",

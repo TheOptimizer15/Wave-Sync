@@ -1,4 +1,4 @@
-export async function callWebhook(url: string, data: any, timeoutMs: number = 10000) {
+export async function sendWebhook(url: string, data: any, timeoutMs: number = 10000) {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);

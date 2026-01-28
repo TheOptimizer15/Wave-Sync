@@ -6,7 +6,6 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Store in project root's stores folder (go up from src/)
 const storesDir = path.join(__dirname, "..", "stores");
 
 // this module saves users s_id cookie to a json file
