@@ -34,7 +34,7 @@ export async function load_cookie(store_id: string) {
     console.log(`Cookie loaded successfully for store: ${store_id}`);
     return s_id;
   } catch (error) {
-    console.log("Error loading cookie:", error);
+    
   }
 }
 

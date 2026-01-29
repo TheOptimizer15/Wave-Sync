@@ -1,18 +1,22 @@
-export async function sendWebhook(url: string, data: any, timeoutMs: number = 10000) {
+import config from "../app.config.json" with{type: "json"}
+
+export async function sendWebhook(type: string, message: string, store_id: string | null) {
+  if (!config.webhook.url || typeof (config.webhook.url) !== "string") {
+    return;
+  }
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-    await fetch(url, {
+    await fetch(config.webhook.url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-      signal: controller.signal,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type,
+        store_id,
+        message,
+        time: Date.now(),
+      }),
     });
-
-    clearTimeout(timeoutId);
+    console.log(`Webhook sent: ${type} for store ${store_id}`);
   } catch (error: any) {
+    console.log(`Failed to send webhook: ${error.message}`);
   }
 }

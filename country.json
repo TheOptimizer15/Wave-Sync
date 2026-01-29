@@ -24,7 +24,7 @@
         "attr": "[data-value='gm']"
     },
     "ne": {
-        "value": "Unknown",
+        "value": "Niger",
         "attr": "[data-value='ne']"
     },
     "cm": {
@@ -32,11 +32,11 @@
         "attr": "[data-value='cm']"
     },
     "sl": {
-        "value": "Unknown",
+        "value": "Sierra Leone",
         "attr": "[data-value='sl']"
     },
     "cd": {
-        "value": "Unknown",
+        "value": "Republique démocratique du Congo",
         "attr": "[data-value='cd']"
     }
 }

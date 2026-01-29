@@ -1,53 +1,41 @@
-import { type Browser } from "puppeteer";
 import appConfig from "../app.config.json" with { type: "json" };
-import { WaveApiResponse, MerchantSaleEntry } from "./transaction.type.js";
+import { WaveApiResponse, MerchantSaleEntry, HistoryEntry } from "./transaction.type.js";
 import { load_cookie } from "./cookie.js";
+import { initBrowser, viewPort } from "./browser.js";
+import { sendWebhook } from "./webhook.js";
+import { HTTPResponse } from "puppeteer";
 
-// Send webhook notification
-async function sendWebhook(type: string, store_id: string, message: string) {
-  try {
-    await fetch(appConfig.webhook.url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type,
-        store_id,
-        message,
-        time: Date.now(),
-      }),
-    });
-    console.log(`Webhook sent: ${type} for store ${store_id}`);
-  } catch (error: any) {
-    console.log(`Failed to send webhook: ${error.message}`);
-  }
+/**
+ * Result structure for the front-end/caller
+ */
+interface FormattedTransaction {
+  payment_reference: string;
+  transfer_id: string;
+  fee: string;
+  amount: string;
+  client_name: string;
+  client_reference: string | null;
+  phone: string;
+  time: string;
+  payment_type: string;
 }
 
-export async function transactions(browser: Browser, store_id: string) {
-  // Load cookie for this store
+export async function transactions(store_id: string) {
   const cookieData = await load_cookie(store_id);
 
   if (!cookieData) {
-    console.log(`No config file found for store: ${store_id}`);
     if (appConfig.webhook.alert_no_config) {
-      await sendWebhook(
-        "no_config",
-        store_id,
-        "No config file found. Please connect your account.",
-      );
+      await sendWebhook("no_config", store_id, "No config file found.");
     }
-    return {
-      success: false,
-      message: "No config file found. Please connect your account.",
-      time: Date.now(),
-      status: 404,
-    };
+    return { success: false, message: "No config file found.", status: 404 };
   }
 
+  const browser = await initBrowser();
   const transaction_page = await browser.newPage();
+  viewPort(transaction_page);
 
   try {
-    // Inject the s_id cookie before navigating
-    await browser.setCookie({
+    await transaction_page.setCookie({
       name: "s_id",
       value: cookieData.s_id,
       domain: "business.wave.com",
@@ -62,104 +50,100 @@ export async function transactions(browser: Browser, store_id: string) {
     });
 
     const is_logged_in = await transaction_page.evaluate(() =>
-      document.body.innerText.includes("Solde"),
+      document.body.innerText.includes("Solde")
     );
 
     if (!is_logged_in) {
-      console.log(`Session expired for store: ${store_id}`);
       await transaction_page.close();
       if (appConfig.webhook.alert_session_expired) {
-        await sendWebhook(
-          "session_expired",
-          store_id,
-          "Session expired. Please reconnect your account.",
-        );
+        await sendWebhook("session_expired", store_id, "Session expired.");
       }
-      return {
-        success: false,
-        message: "Session expired. Please reconnect your account.",
-        time: Date.now(),
-        status: 401,
-      };
+      return { success: false, message: "Session expired.", status: 401 };
     }
 
-    console.log("Loading transactions...");
+    console.log("Setting up type-safe multi-packet collector...");
 
-    await transaction_page.waitForSelector("#limit-field", {
-      timeout: appConfig.timeout,
-    });
+    // 1. Array to hold all intercepted entries using your HistoryEntry union type
+    const allCapturedEntries: HistoryEntry[] = [];
+    const key = "HistoryEntries_BusinessWalletHistoryQuery";
 
-    // Create a promise that resolves when the specific GraphQL response is intercepted
-    const transaction_response = new Promise((resolve, reject) => {
-      const timeout = setTimeout(
-        () => reject(new Error("Transaction timeout")),
-        30000,
-      );
+    // 2. Continuous Listener
+    const onResponse = async (response: HTTPResponse) => {
+      const url = response.url();
+      if (url.includes("business_graphql") && response.request().method() === "POST") {
+        const postData = await response.request().fetchPostData();
+        if (postData?.includes(key)) {
+          try {
+            const json: WaveApiResponse = await response.json();
+            const entries = json.data.me.businessUser.business.walletHistory.historyEntries;
 
-      transaction_page.on("response", async (response) => {
-        const url = response.url();
-        const request = response.request();
-
-        if (url.includes("business_graphql") && request.method() === "POST") {
-          const postData = await request.fetchPostData(); // Use standard postData()
-
-          if (postData?.includes("HistoryEntries_BusinessWalletHistoryQuery")) {
-            try {
-              const jsonResponse: Promise<WaveApiResponse> =
-                await response.json();
-              const paymentHistories = (
-                await jsonResponse
-              )?.data?.me?.businessUser?.business?.walletHistory?.historyEntries
-                ?.filter((entry) => entry?.__typename === "MerchantSaleEntry")
-                .map((entry) => ({
-                  payment_reference: entry.id,
-                  transfer_id: entry.transferId,
-                  fee: entry.feeAmount.replace("CFA ", ""),
-                  amount: entry.amount.replace("CFA ", ""),
-                  client_name: entry.customerName,
-                  client_reference: entry.clientReference,
-                  phone: entry.customerMobile.replace(/\s+/g, ""),
-                  time: entry.whenEntered,
-                }))
-                .reverse();
-
-              clearTimeout(timeout);
-              resolve(paymentHistories);
-            } catch (e: any) {
-              throw new Error(e.message);
+            if (entries && entries.length > 0) {
+              allCapturedEntries.push(...entries);
             }
+          } catch (e) {
+            // Ignore background pings that aren't valid history JSON
           }
         }
-      });
-    });
+      }
+    };
 
-    // Trigger the request by filling the limit field
-    await transaction_page.locator("#limit-field").fill("40");
-    // Press Enter if necessary to trigger the refresh
+    transaction_page.on("response", onResponse);
+
+    // 3. Trigger the request
+    console.log("Triggering transactions load...");
+    const limitInput = await transaction_page.waitForSelector("#limit-field");
+    await limitInput?.click({ clickCount: 3 });
+    await limitInput?.type("0");
     await transaction_page.keyboard.press("Enter");
 
-    // Wait for the promise to resolve with data
-    const data = await transaction_response;
+    // 4. WAIT for the stream to finish
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    // 5. Cleanup
+    transaction_page.off("response", onResponse);
+
+    // 6. DEDUPLICATE using a Map
+    const uniqueMap = new Map<string, HistoryEntry>();
+    allCapturedEntries.forEach((item) => uniqueMap.set(item.id, item));
+    const mergedEntries = Array.from(uniqueMap.values());
+
+    // 7. FILTER AND MAP (Strictly MerchantSaleEntry)
+    // We use a type guard to ensure the compiler knows we are handling MerchantSaleEntry
+    const salesOnly: FormattedTransaction[] = mergedEntries
+      .filter((entry): entry is MerchantSaleEntry => entry.__typename === "MerchantSaleEntry")
+      .map((entry) => ({
+        payment_reference: entry.id,
+        transfer_id: entry.transferId,
+        fee: entry.feeAmount.replace("CFA ", ""),
+        amount: entry.amount.replace("CFA ", ""),
+        client_name: entry.customerName,
+        client_reference: entry.clientReference,
+        phone: entry.customerMobile.replace(/\s+/g, ""),
+        time: entry.whenEntered,
+        payment_type: entry.actionSource,
+      }))
+      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+
+    console.log(`Successfully retrieved ${salesOnly.length} unique sales.`);
 
     await transaction_page.close();
+    await browser.close();
 
-    // return the data
-    console.log("Closing page, transaction retreived");
     return {
       success: true,
       message: "transactions retrieved",
-      error: null,
-      transactions: data,
+      transactions: salesOnly,
+      count: salesOnly.length,
       status: 200,
       time: Date.now(),
     };
+
   } catch (error: any) {
-    if (!transaction_page.isClosed()) await transaction_page.close();
-    console.error("Error:", error.message);
+    if (browser) await browser.close();
+    console.error("Scraping Error:", error.message);
     return {
       success: false,
       message: error.message,
-      error: error.message,
       transactions: null,
       status: 500,
       time: Date.now(),

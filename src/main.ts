@@ -5,182 +5,92 @@ import { transactions } from "./transactions.js";
 import { status } from "./status.js";
 import { otpEmitter } from "./emitter.js";
 import { delete_cookie } from "./cookie.js";
+import { verifyTransaction } from "./verify.js";
 
 const app = express();
 app.use(express.json());
 
-// Global browser instance that stays open
-let browser: Browser | null = null;
-
-// Initialize browser on startup
-async function initBrowser(): Promise<Browser> {
-  if (!browser || !browser.connected) {
-    console.log("Launching browser...");
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
-    console.log("Browser launched successfully");
-  }
-  return browser;
-}
-
-// Get browser status
-app.get("/health", (req: Request, res: Response) => {
-  res.json({
-    success: true,
-    browser_connected: browser?.connected ?? false,
-    time: Date.now(),
-  });
+// launch browser to maintain session active
+const browser = puppeteer.launch({
+  slowMo: 50
 });
 
-// Login endpoint
-app.post("/login", async (req: Request, res: Response) => {
-  const { store_id, phone, password } = req.body;
-
-  if (!store_id || !phone || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "Missing required fields: store_id, phone, password",
-    });
+// create routes for user to login
+app.post("/login", (req, res) => {
+  const { password, country, phone, store_id } = req.body;
+  if (!password || !country || !phone || !store_id) {
+    res.status(422).json({
+      status: false,
+      message: "All required data have not been provided"
+    })
+    return;
   }
 
-  try {
-    await login(store_id, phone, password);
-    res.json({
-      success: true,
-      message: "Login process initiated, waiting for OTP",
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+  login(store_id, phone, password, country);
+
+  res.status(202).json({
+    sucess: true,
+    message: "Login process started"
+  })
+
 });
 
-// OTP endpoint - receives OTP and emits to login process
-app.post("/otp", (req: Request, res: Response) => {
+
+// otp event
+app.post("/otp", (req, res) => {
   const { code } = req.body;
-
   if (!code) {
-    return res.status(400).json({
-      success: false,
-      message: "Missing OTP code",
-    });
+    res.status(422).json({
+      status: false,
+      mesasge: "OTP not provided"
+    })
+    return;
   }
 
-  console.log(`OTP received: ${code}`);
   otpEmitter.emit("otp", code);
 
-  res.json({
-    success: true,
-    message: "OTP received and forwarded",
-  });
-});
+  res.send(200).json({
+    status: true,
+    message: "OTP submitted"
+  })
+})
 
-// Get transactions
-app.get("/transactions/:store_id", async (req: Request, res: Response) => {
-  try {
-    const store_id = req.params.store_id as string;
-    const browserInstance = await initBrowser();
-    const result = await transactions(browserInstance, store_id);
-    res.status(result.status).json(result);
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+// transactions 
+app.get("/transactions/:store_id", async (req, res) => {
+  const { store_id } = req.params;
+  if (!store_id) {
+    res.status(422).json({
+      status: false,
+      message: "Store id not provided"
+    })
+    return;
   }
-});
 
-// Get account status
-app.get("/status/:store_id", async (req: Request, res: Response) => {
-  try {
-    const store_id = req.params.store_id as string;
-    const browserInstance = await initBrowser();
-    const result = await status(browserInstance, store_id);
-    res.status(result.status).json(result);
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  const response = await transactions(store_id);
+  res.status(200).json(response)
+})
+
+app.get("/verify/:store_id/:transaction_id", async (req, res) => {
+  const { store_id, transaction_id } = req.params;
+
+  if (!store_id || !transaction_id) {
+    res.status(422).json({
+      status: false,
+      message: "Store or transaction id not provided"
+    })
+    return;
   }
+
+  const response = await verifyTransaction(store_id, transaction_id);
+  res.status(response.status).json(response)
 });
 
-// Disconnect - delete store cookie
-app.delete("/disconnect/:store_id", async (req: Request, res: Response) => {
-  try {
-    const store_id = req.params.store_id as string;
-    const deleted = await delete_cookie(store_id);
 
-    if (deleted) {
-      res.json({
-        success: true,
-        message: `Store ${store_id} disconnected successfully`,
-        time: Date.now(),
-      });
-    } else {
-      res.status(404).json({
-        success: false,
-        message: `Store ${store_id} not found or already disconnected`,
-        time: Date.now(),
-      });
-    }
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-});
 
 const PORT = process.env.PORT || 3000;
 
-// Main startup function
-async function main() {
-  try {
-    // Initialize browser on startup
-    await initBrowser();
+// start the server
+app.listen(PORT, () => {
+  console.log("Server started on port ", PORT);
+});
 
-    // Start Express server
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-      console.log("Available endpoints:");
-      console.log(
-        "  GET    /health              - Check server and browser status",
-      );
-      console.log("  POST   /login               - Login to Wave account");
-      console.log("  POST   /otp                 - Submit OTP code");
-      console.log("  GET    /transactions/:store_id - Get transaction history");
-      console.log("  GET    /status/:store_id    - Get account status");
-      console.log("  DELETE /disconnect/:store_id - Disconnect store account");
-    });
-
-    // Handle graceful shutdown
-    process.on("SIGINT", async () => {
-      console.log("\nShutting down...");
-      if (browser) {
-        await browser.close();
-        console.log("Browser closed");
-      }
-      process.exit(0);
-    });
-
-    process.on("SIGTERM", async () => {
-      console.log("\nShutting down...");
-      if (browser) {
-        await browser.close();
-        console.log("Browser closed");
-      }
-      process.exit(0);
-    });
-  } catch (error: any) {
-    console.error("Failed to start server:", error.message);
-    process.exit(1);
-  }
-}
-
-// Run the main function
-main();
