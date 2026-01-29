@@ -3,16 +3,74 @@
 **Wave Sync** is a TypeScript-based API wrapper and automation tool for the Wave Business Portal. It leverages **Puppeteer** to automate browser interactions and **Express** to provide a RESTful API interface. This allows developers to programmatically log in, handle OTPs, check account status, and retrieve transaction history from a Wave Business account.
 
 ## 📦 Version
+Wave Sync
 
-**Current Version:** `1.1.0`
+Wave Sync is a TypeScript-based API wrapper and automation tool for the Wave Business Portal. It leverages Puppeteer to automate browser interactions and Express to provide a RESTful API interface.
 
-### What's New in v1.1.0
+📦 Version
 
-- **Store-based Sessions:** Each store now has its own session cookie stored in `stores/{store_id}.json`
-- **Cookie Injection:** Sessions are automatically loaded and injected into browser requests
-- **Disconnect Endpoint:** New `DELETE /disconnect/:store_id` endpoint to remove store sessions
-- **Webhook Alerts:** New alerts for missing config (`alert_no_config`) and expired sessions (`alert_session_expired`)
-- **Client Reference:** Transaction data now includes `client_reference` field
+Current Version: 1.2.0
+
+What's New in v1.2.0
+
+Multi-Packet Collector: Merges background data shards to ensure 100% data capture.
+
+Verification Endpoint: Verify a single transaction using its client reference.
+
+Full Type Safety: Strict TypeScript interfaces for all Wave API responses.
+
+🚀 Features
+
+Automated Login: Handles the login flow and handles SMS OTPs via API.
+
+Smart Interception: Captures GraphQL packets to retrieve clean, parsed transaction history.
+
+Deduplication: Merges multiple network packets to prevent missing or double entries.
+
+Webhooks: Real-time notifications for OTP, login status, and session health.
+
+📡 API Endpoints
+
+1. Get Transactions
+
+Retrieves the history of transactions for a specific store.
+
+URL: GET /transactions/:store_id
+
+Logic: Waits 5 seconds to collect all background shards from Wave.
+
+2. Verify Transaction
+
+Checks if a specific transaction exists based on a client reference.
+
+URL: GET /verify/:store_id/:client_reference
+
+Response: ```json
+{
+"success": true,
+"transaction": { ... },
+"status": 200
+}
+
+
+### 3. Check Status
+Checks if the browser session is currently active.
+- **URL:** `GET /status/:store_id`
+
+### 4. Disconnect Store
+Removes the session cookie for a store.
+- **URL:** `DELETE /disconnect/:store_id`
+
+## 🪝 Webhook Events
+Events are sent to the URL defined in `app.config.json`.
+- `otp:required`
+- `login:success` / `login:failed`
+- `no_config`
+- `session_expired`
+
+## ⚠️ Disclaimer
+This project is an unofficial automation tool. Use it responsibly and ensure you comply with Wave's Terms of Service.
+
 
 ## 🚀 Features
 

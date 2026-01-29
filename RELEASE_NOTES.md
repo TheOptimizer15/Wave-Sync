@@ -1,107 +1,57 @@
-# Release Notes
+Release Notes
 
-## v1.1.0 - Multi-Store Session Management
+v1.2.0 - High-Reliability Data Interception
 
-**Release Date:** January 27, 2026
+Release Date: January 29, 2026
 
-### 🎯 Highlights
+🎯 Highlights
 
-This release introduces a complete session management system with support for multiple Wave Business accounts, persistent cookie storage, and enhanced webhook notifications.
+This release fixes the "missing data" issues caused by Wave's background network behavior. We've replaced the single-packet interception with a robust collection stream that merges multiple data shards and ensures type safety across the board.
 
----
+✨ New Features
 
-### ✨ New Features
+Multi-Packet Network Collector
 
-#### Store-Based Session Management
+Shard Merging: The system now listens for 5 seconds after triggering a load to collect all GraphQL shards sent by the portal.
 
-- Each store now has its own session cookie stored in `stores/{store_id}.json`
-- Sessions are automatically loaded and injected into browser requests
-- Supports multiple Wave Business accounts simultaneously
+Deduplication: Automatic removal of duplicate entries based on unique transaction IDs.
 
-#### Secure Credential Handling
+Improved Triggering: Replaced simple input filling with a click-type-enter sequence to better mimic user interaction and force API refreshes.
 
-- **Removed `config.json`** - Credentials are no longer stored in config files
-- Phone and password are now passed securely via the `/login` API request body
-- Each login request includes `store_id`, `phone`, and `password`
+Robust Transaction Verification
 
-#### New API Endpoints
+New GET /verify/:store_id/:client_reference endpoint.
 
-- `GET /transactions/:store_id` - Get transactions for a specific store
-- `GET /status/:store_id` - Check connection status for a specific store
-- `DELETE /disconnect/:store_id` - Remove session cookie and disconnect a store
+Uses the same high-reliability collector to find a specific transaction by its reference.
 
-#### Enhanced Webhook Alerts
+Full TypeScript Safety
 
-- `alert_no_config` - Triggered when a store's config file is not found
-- `alert_session_expired` - Triggered when a session cookie has expired or is invalid
+Integrated strict typing using the WaveApiResponse and HistoryEntry interfaces.
 
-#### Transaction Data Enhancement
+Implemented TypeScript type guards to safely handle union types within the transaction stream.
 
-- Added `client_reference` field to transaction response data
+🔧 Improvements
 
----
+Network Resilience: Increased network timeouts to 60s to handle slow dashboard loads.
 
-### 🔧 Improvements
+Chronological Sorting: All transaction lists are now sorted by actual timestamp (whenEntered) rather than simple list reversal.
 
-- Cookie injection now uses secure cookies with proper domain configuration
-- Better error handling with descriptive messages for missing configs and expired sessions
-- Updated console output to show all available endpoints on server startup
+Deprecation Fixes: Migrated all network logic to fetchPostData() to align with modern Puppeteer standards.
 
----
+📝 Files Changed
 
-### 📁 Configuration Changes
+src/transactions.ts - Switched to Multi-Packet Collector.
 
-**Removed:**
+src/verify.ts - Refined verification logic with the new collector.
 
-- `config.json` - No longer needed, credentials passed via API
-- `config.example.json` - Removed
+src/transaction.type.ts - Updated interfaces for better type coverage.
 
-**Updated `app.config.json`:**
+README.md - Added documentation for the verification endpoint.
 
-```json
-{
-  "webhook": {
-    "alert_no_config": true,
-    "alert_session_expired": true
-  }
-}
-```
+🚀 Upgrade Guide
 
----
+Pull latest changes.
 
-### 📝 Files Changed
+Re-run npm install to ensure Puppeteer types are up to date.
 
-- `src/main.ts` - Added disconnect endpoint and store_id routing
-- `src/transactions.ts` - Added cookie loading, injection, and webhook alerts
-- `src/status.ts` - Added cookie loading, injection, and webhook alerts
-- `src/cookie.ts` - Added ESM path resolution and delete_cookie function
-- `app.config.json` - Added new webhook alert options
-- `README.md` - Updated documentation, removed config.json references
-- `.gitignore` - Updated for stores folder, removed config.json
-- **Deleted:** `config.json`, `config.example.json`
-
----
-
-### ⚠️ Breaking Changes
-
-- `/transactions` endpoint now requires store_id parameter: `/transactions/:store_id`
-- `/status` endpoint now requires store_id parameter: `/status/:store_id`
-- Login endpoint now requires `store_id`, `phone`, and `password` in request body
-- `config.json` has been removed - migrate credentials to API requests
-
----
-
-### 🚀 Upgrade Guide
-
-1. **Remove config.json** - Delete your existing config.json file
-2. **Update login calls** - Pass credentials in the request body:
-   ```json
-   {
-     "store_id": "my_store",
-     "phone": "0123456789",
-     "password": "your_password"
-   }
-   ```
-3. **Update API paths** - Add `store_id` to transaction and status URLs
-4. **Add webhook options** - Add new alert options to `app.config.json`
-5. **Regenerate sessions** - Existing cookies need to be regenerated via login
+No breaking changes to the existing API contract; just more reliable data returns.
