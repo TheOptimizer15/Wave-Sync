@@ -85,7 +85,38 @@ app.get("/verify/:store_id/:transaction_id", async (req, res) => {
   res.status(response.status).json(response)
 });
 
+app.get("/status/:store_id", async (req, res) => {
+  const { store_id } = req.params;
+  if (!store_id) {
+    res.status(422).json({
+      status: false,
+      message: "Store id not provided"
+    })
+    return;
+  }
 
+  const response = await status(store_id);
+  res.json(response.status).json(response)
+})
+
+app.get("/disconnect/:store_id", async (req, res) => {
+  const { store_id } = req.params;
+  if (!store_id) {
+    res.status(422).json({
+      status: false,
+      message: "Store id not provided"
+    })
+    return;
+  }
+
+  const response = await delete_cookie(store_id);
+  if (response) {
+    res.json({
+      success: true,
+      message: "Account sucessfully deleted"
+    })
+  }
+})
 
 const PORT = process.env.PORT || 3000;
 
