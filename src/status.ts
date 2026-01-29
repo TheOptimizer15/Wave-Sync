@@ -51,7 +51,7 @@ export async function status(store_id: string) {
 
     console.log("Account is active");
 
-    await home_page.close();
+    await browser.close();
     return {
       success: true,
       message: "Account connected",
@@ -60,7 +60,7 @@ export async function status(store_id: string) {
     };
 
   } catch (error: any) {
-    await home_page.close();
+    if (browser) await browser.close();
     console.log(error?.message);
     console.log("Closing page");
     return {

@@ -117,7 +117,7 @@ export async function login(store_id: string, phone: string, password: string, c
         if (appConfig.webhook.alert_login) {
             sendWebhook("login:failed", error.message, store_id);
         }
-        await browser.close();
+        if (browser) await browser.close();
         console.log(error?.message);
         console.log("Closing login page");
     }
