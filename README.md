@@ -3,21 +3,25 @@
 **Wave Sync** is a TypeScript-based API wrapper and automation tool for the Wave Business Portal. It leverages **Puppeteer** to automate browser interactions and **Express** to provide a RESTful API interface. This allows developers to programmatically log in, handle OTPs, check account status, and retrieve transaction history from a Wave Business account.
 
 ## 📦 Version
+
 Wave Sync
 
 Wave Sync is a TypeScript-based API wrapper and automation tool for the Wave Business Portal. It leverages Puppeteer to automate browser interactions and Express to provide a RESTful API interface.
 
 📦 Version
 
-Current Version: 1.2.0
+Current Version: 1.2.1
+
+What's New in v1.2.1
+
+- **OTP Listener Fix:** Solved race conditions in multi-store environments by namespacing OTP events per store ID.
+- **Improved Cleanup:** Added strict listener removal on timeouts to prevent memory leaks.
 
 What's New in v1.2.0
 
-Multi-Packet Collector: Merges background data shards to ensure 100% data capture.
-
-Verification Endpoint: Verify a single transaction using its client reference.
-
-Full Type Safety: Strict TypeScript interfaces for all Wave API responses.
+- **Multi-Packet Collector:** Merges background data shards to ensure 100% data capture.
+- **Verification Endpoint:** Verify a single transaction using its client reference.
+- **Full Type Safety:** Strict TypeScript interfaces for all Wave API responses.
 
 🚀 Features
 
@@ -52,25 +56,30 @@ Response: ```json
 "status": 200
 }
 
-
 ### 3. Check Status
+
 Checks if the browser session is currently active.
+
 - **URL:** `GET /status/:store_id`
 
 ### 4. Disconnect Store
+
 Removes the session cookie for a store.
+
 - **URL:** `DELETE /disconnect/:store_id`
 
 ## 🪝 Webhook Events
+
 Events are sent to the URL defined in `app.config.json`.
+
 - `otp:required`
 - `login:success` / `login:failed`
 - `no_config`
 - `session_expired`
 
 ## ⚠️ Disclaimer
-This project is an unofficial automation tool. Use it responsibly and ensure you comply with Wave's Terms of Service.
 
+This project is an unofficial automation tool. Use it responsibly and ensure you comply with Wave's Terms of Service.
 
 ## 🚀 Features
 

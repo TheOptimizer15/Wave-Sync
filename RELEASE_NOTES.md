@@ -1,5 +1,21 @@
 Release Notes
 
+v1.2.1 - OTP Listener Reliability Patch
+
+Release Date: January 30, 2026
+
+🎯 Highlights
+
+This patch addresses a critical race condition in the OTP listener logic. Previous versions used a generic "otp" event which could lead to cross-talk between multiple store login sessions. v1.2.1 namespaces these events by `store_id` to ensure absolute isolation.
+
+✨ Changes
+
+- **Namespaced OTP Events:** OTP listeners now subscribe to `otp_{store_id}` instead of the global `otp` event.
+- **Strict Cleanup:** Added explicit removal of event listeners upon timeout to prevent memory leaks.
+- **Error Handling:** Improved rejection logic when OTPs timeout.
+
+---
+
 v1.2.0 - High-Reliability Data Interception
 
 Release Date: January 29, 2026
