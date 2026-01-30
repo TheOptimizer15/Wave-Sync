@@ -35,7 +35,7 @@ export async function transactions(store_id: string) {
   viewPort(transaction_page);
 
   try {
-    await transaction_page.setCookie({
+    await browser.setCookie({
       name: "s_id",
       value: cookieData.s_id,
       domain: "business.wave.com",
@@ -99,18 +99,17 @@ export async function transactions(store_id: string) {
     // 4. WAIT for the stream to finish
     await new Promise((resolve) => setTimeout(resolve, 5000));
 
-    // 5. Cleanup
+   
     transaction_page.off("response", onResponse);
 
-    // 6. DEDUPLICATE using a Map
+
     const uniqueMap = new Map<string, HistoryEntry>();
     allCapturedEntries.forEach((item) => uniqueMap.set(item.id, item));
     const mergedEntries = Array.from(uniqueMap.values());
 
-    // 7. FILTER AND MAP (Strictly MerchantSaleEntry)
-    // We use a type guard to ensure the compiler knows we are handling MerchantSaleEntry
+  
     const salesOnly: FormattedTransaction[] = mergedEntries
-      .filter((entry): entry is MerchantSaleEntry => entry.__typename === "MerchantSaleEntry")
+      .filter((entry) => entry.__typename === "MerchantSaleEntry")
       .map((entry) => ({
         payment_reference: entry.id,
         transfer_id: entry.transferId,
@@ -126,7 +125,6 @@ export async function transactions(store_id: string) {
 
     console.log(`Successfully retrieved ${salesOnly.length} unique sales.`);
 
-    await transaction_page.close();
     await browser.close();
 
     return {

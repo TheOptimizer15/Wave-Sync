@@ -37,7 +37,7 @@ export async function status(store_id: string) {
       value: cookieData.s_id,
       domain: "business.wave.com",
       path: "/",
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
     });
 
@@ -52,6 +52,7 @@ export async function status(store_id: string) {
     console.log("Account is active");
 
     await browser.close();
+    
     return {
       success: true,
       message: "Account connected",

@@ -10,7 +10,11 @@ import { verifyTransaction } from "./verify.js";
 const app = express();
 app.use(express.json());
 
-// launch browser to maintain session active
+app.use((req, res, next) => {
+  console.log(req.headers);
+  next();
+});
+
 const browser = puppeteer.launch({
   slowMo: 50
 });
@@ -18,11 +22,13 @@ const browser = puppeteer.launch({
 // create routes for user to login
 app.post("/login", (req, res) => {
   const { password, country, phone, store_id } = req.body;
+
   if (!password || !country || !phone || !store_id) {
     res.status(422).json({
       status: false,
       message: "All required data have not been provided"
     })
+
     return;
   }
 
@@ -38,20 +44,21 @@ app.post("/login", (req, res) => {
 
 // otp event
 app.post("/otp", (req, res) => {
-  const { code } = req.body;
-  if (!code) {
+  const { code, store_id } = req.body;
+  if (!code || !store_id) {
     res.status(422).json({
       status: false,
-      mesasge: "OTP not provided"
+      mesasge: " "
     })
     return;
   }
 
-  otpEmitter.emit("otp", code);
+  otpEmitter.emit(`otp_${store_id}`, code);
 
-  res.send(200).json({
+  res.status(200).json({
     status: true,
-    message: "OTP submitted"
+    message: "OTP submitted",
+    store_id
   })
 })
 
@@ -82,11 +89,13 @@ app.get("/verify/:store_id/:transaction_id", async (req, res) => {
   }
 
   const response = await verifyTransaction(store_id, transaction_id);
+
   res.status(response.status).json(response)
 });
 
 app.get("/status/:store_id", async (req, res) => {
   const { store_id } = req.params;
+
   if (!store_id) {
     res.status(422).json({
       status: false,
@@ -96,7 +105,7 @@ app.get("/status/:store_id", async (req, res) => {
   }
 
   const response = await status(store_id);
-  res.json(response.status).json(response)
+  res.status(response.status).json(response)
 })
 
 app.get("/disconnect/:store_id", async (req, res) => {
@@ -110,6 +119,7 @@ app.get("/disconnect/:store_id", async (req, res) => {
   }
 
   const response = await delete_cookie(store_id);
+
   if (response) {
     res.json({
       success: true,

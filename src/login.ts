@@ -66,7 +66,7 @@ export async function login(store_id: string, phone: string, password: string, c
             // define listener for retreiving otp
             const otpListener = (code: string) => {
                 clearTimeout(rejectTimeout);
-                console.log(`Otp retreived ${code}`);
+                console.log(`Otp retreived ${code} for ${store_id}`);
                 resolve(code);
             };
 
@@ -83,7 +83,7 @@ export async function login(store_id: string, phone: string, password: string, c
 
 
             // listen to otp emiter
-            otpEmitter.once("otp", otpListener);
+            otpEmitter.once(`otp_${store_id}`, otpListener);
 
             console.log("Endpoint active at post : /otp");
         });
@@ -95,7 +95,7 @@ export async function login(store_id: string, phone: string, password: string, c
         await login_page.locator('button[type="submit"]').click();
 
         // wait for redirection 
-        await login_page.waitForNavigation({ waitUntil: "networkidle0", timeout: appConfig.timeout });
+        await login_page.waitForNavigation({ waitUntil: "networkidle0", timeout: appConfig.login_redirection_timeout });
 
         // 
         await login_page.waitForSelector("::-p-text(Solde), ::-p-text(Transaction), ::-p-text(Montant), ::-p-text(Amount)", { timeout: appConfig.timeout });

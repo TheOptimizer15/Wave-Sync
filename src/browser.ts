@@ -3,7 +3,7 @@ import puppeteer, { Page } from "puppeteer";
 export async function initBrowser() {
     return await puppeteer.launch({
         slowMo: 50,
-        headless: true
+        headless: false
     });
 }
 

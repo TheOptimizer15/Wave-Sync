@@ -8,5 +8,6 @@
   },
   "wave_portal_url": "https://business.wave.com",
   "wave_transaction_url": "https://business.wave.com/transactions",
-  "timeout": 240000
+  "timeout": 240000, 
+  "login_redirection_timeout": 60000
 }
