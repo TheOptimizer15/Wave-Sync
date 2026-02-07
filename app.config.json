@@ -1,13 +1,28 @@
 {
-  "webhook": {
-    "url": "http://localhost:3500/webhook",
-    "alert_otp": false,
-    "alert_login": false,
-    "alert_no_config": false,
-    "alert_session_expired": false
+  "urls": {
+    "portal": "https://business.wave.com",
+    "transactions": "https://business.wave.com/transactions",
+    "settings": "https://business.wave.com/settings/account-info",
+    "login_redirect_pattern": "business.wave.com/dashboard" 
   },
-  "wave_portal_url": "https://business.wave.com",
-  "wave_transaction_url": "https://business.wave.com/transactions",
-  "timeout": 240000, 
-  "login_redirection_timeout": 60000
+  "timeouts": {
+    "global": 240000,
+    "browser_launch": 30000,
+    "page_load": 60000,
+    "network_idle": 10000,
+    "selector_visible": 15000,
+    "login_redirection": 60000,
+    "otp_wait": 120000
+  },
+  "delays": {
+    "typing_min": 50,
+    "typing_max": 150,
+    "click_pause": 500,
+    "after_navigation": 2000
+  },
+  "browser": {
+    "headless": true,
+    "viewport": { "width": 1920, "height": 1080 },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  }
 }

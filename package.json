@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/main.js",
-    "dev": "tsx src/main.ts"
+    "dev": "tsx app/src/main.ts",
+    "make:controller": "node vendor/cli/action.js controller",
+    "make:service": "node vendor/cli/action.js service"
   },
   "dependencies": {
     "express": "^5.2.1",
